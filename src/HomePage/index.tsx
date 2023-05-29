@@ -2,7 +2,7 @@ import { Input, Select, Modal, Pagination } from 'antd';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { json } from 'd3-request';
-import { SDGGoalList } from './SDGGoalList';
+import { SDGGoalList } from '../Utils/SDGGoalList';
 import {
   CountryDataType,
   KeyToRemoveData,

@@ -127,3 +127,12 @@ export type NormativeDirectionDataType =
   | 'decrease'
   | 'not increase'
   | 'not decrease';
+
+export interface TargetsDataType {
+  Target: string;
+  'Target Description': string;
+  Indicators: {
+    Indicator: string;
+    'Indicator Description': string;
+  }[];
+}

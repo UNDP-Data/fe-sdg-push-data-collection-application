@@ -8,6 +8,9 @@ import {
   NormativeDirectionDataType,
   TimeSeriesDataTypeWithId,
 } from '../Types';
+import { CheckUndefinedOrNull } from '../Utils/CheckUndefinedOrNull';
+import { GenerateRandomString } from '../Utils/GenerateRandomID';
+import { GetMethodologyObj } from '../Utils/GetMethodologyObj';
 
 interface Props {
   indicatorList: string[];
@@ -15,99 +18,6 @@ interface Props {
   indexNo: number;
   updateData: (_d: TimeSeriesDataTypeWithId) => void;
 }
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const CheckUndefinedOrNull = (d: any) => {
-  if (d === undefined || d === null) return true;
-  return false;
-};
-
-const getMethodologyObj = (
-  methodologyType: MethodologyTypeData,
-  normativeDirection: 'increase' | 'decrease' | 'not increase' | 'not decrease',
-  targetValue?: number,
-) => {
-  const methodologyObj: MethodologyDataType | 'NA' =
-    methodologyType === 'Not Available'
-      ? 'NA'
-      : methodologyType === 'Numerical'
-      ? targetValue
-        ? {
-            normativeDirection,
-            CAGRLimit: [0.01, 0.005, -0.01],
-            trendMethodology: 'CAGRR',
-            baselineYear: {
-              all: 2015,
-            },
-            targetValue,
-          }
-        : {
-            normativeDirection,
-            CAGRLimit: [0.01, 0.005, -0.01],
-            trendMethodology: 'CAGRA',
-            baselineYear: {
-              all: 2015,
-            },
-          }
-      : methodologyType === 'Binary'
-      ? {
-          value: targetValue as number,
-          trendMethodology: 'Binary',
-          baselineYear: {
-            all: 2015,
-          },
-        }
-      : methodologyType === 'Likert'
-      ? {
-          targetValue,
-          normativeDirection,
-          trendMethodology: 'Likert',
-          baselineYear: {
-            all: 2015,
-          },
-        }
-      : methodologyType === 'Doubling'
-      ? {
-          trendMethodology: 'Doubling',
-          baselineYear: {
-            all: 2015,
-          },
-        }
-      : {
-          trendMethodology: 'Halfing',
-          baselineYear: {
-            all: 2015,
-          },
-        };
-  return methodologyObj;
-};
-
-const generateRandomString = () => {
-  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-  let randomString = '';
-
-  for (let i = 0; i < 3; i += 1) {
-    randomString += characters.charAt(
-      Math.floor(Math.random() * characters.length),
-    );
-  }
-
-  randomString += '_';
-
-  for (let i = 0; i < 3; i += 1) {
-    randomString += characters.charAt(
-      Math.floor(Math.random() * characters.length),
-    );
-  }
-
-  randomString += '_';
-  for (let i = 0; i < 4; i += 1) {
-    randomString += characters.charAt(
-      Math.floor(Math.random() * characters.length),
-    );
-  }
-  return randomString;
-};
 
 export function AddSeries(props: Props) {
   const { indicatorList, setAddSeriesModalVisible, indexNo, updateData } =
@@ -397,7 +307,7 @@ export function AddSeries(props: Props) {
             if (methodologyType === 'Binary' || methodologyType === 'Likert') {
               if (!CheckUndefinedOrNull(targetValue)) {
                 const methodologyObj: MethodologyDataType | 'NA' =
-                  getMethodologyObj(
+                  GetMethodologyObj(
                     methodologyType,
                     normativeDirection,
                     targetValue || undefined,
@@ -437,14 +347,14 @@ export function AddSeries(props: Props) {
               }
             } else {
               const methodologyObj: MethodologyDataType | 'NA' =
-                getMethodologyObj(
+                GetMethodologyObj(
                   methodologyType,
                   normativeDirection,
                   targetValue || undefined,
                 );
               const updatedData: TimeSeriesDataTypeWithId = {
                 'Reporting Type': 'G',
-                series: generateRandomString(),
+                series: GenerateRandomString(),
                 seriesDescription,
                 id: `series_id_${indexNo}`,
                 goal: `${

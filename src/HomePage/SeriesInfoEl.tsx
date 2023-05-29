@@ -1,5 +1,5 @@
 import { TimeSeriesDataTypeWithId } from '../Types';
-import { SDGGoalList } from './SDGGoalList';
+import { SDGGoalList } from '../Utils/SDGGoalList';
 
 interface Props {
   data: TimeSeriesDataTypeWithId;
