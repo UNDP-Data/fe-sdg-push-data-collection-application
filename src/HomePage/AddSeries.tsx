@@ -314,7 +314,7 @@ export function AddSeries(props: Props) {
                   );
                 const updatedData: TimeSeriesDataTypeWithId = {
                   'Reporting Type': 'G',
-                  series: generateRandomString(),
+                  series: GenerateRandomString(),
                   seriesDescription,
                   id: `series_id_${indexNo}`,
                   goal: `${
