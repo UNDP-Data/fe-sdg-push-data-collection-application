@@ -1,6 +1,6 @@
 export const GenerateRandomString = () => {
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-  let randomString = '';
+  let randomString = '[GOV]';
 
   for (let i = 0; i < 3; i += 1) {
     randomString += characters.charAt(
