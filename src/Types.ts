@@ -22,6 +22,7 @@ export interface ValuesDataType {
   year: number;
   value: number;
   label?: string;
+  addedByCO?: boolean;
 }
 
 export interface MethodologyDataType {
@@ -48,13 +49,12 @@ export interface MethodologyDataType {
   };
 }
 
-export interface TimeSeriesDataType {
+export interface TimeSeriesDataTypeWOValue {
   series: string;
   goal: string;
   target: string;
   indicator: string;
   seriesDescription: string;
-  values: ValuesDataType[];
   currentLevelAssessment?: 'string';
   methodology: MethodologyDataType | 'NA';
   Age?: string;
@@ -94,8 +94,8 @@ export interface TimeSeriesDataType {
     | 'Deterioration';
 }
 
-export interface TimeSeriesDataTypeWithId extends TimeSeriesDataType {
-  id: string;
+export interface TimeSeriesDataType extends TimeSeriesDataTypeWOValue {
+  values: ValuesDataType[];
 }
 
 export interface CountryDataType {
@@ -111,7 +111,16 @@ export interface FormDataType {
   value?: number;
   label?: string;
   id: number;
+  addedByCO: boolean;
 }
+
+export interface TimeSeriesDataTypeWithId extends TimeSeriesDataTypeWOValue {
+  id: string;
+  values: FormDataType[];
+  comment?: string;
+  'Additional Source'?: string;
+}
+
 export type MethodologyTypeData =
   | 'Not Available'
   | 'Binary'

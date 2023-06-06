@@ -63,13 +63,21 @@ export function CountryHomePage() {
           setError(err);
           setLoading(false);
         }
-        setUpdatedData(
-          d.tsData.map((el, j) => ({ ...el, id: `series_id_${j}` })),
-        );
+        const tsData: TimeSeriesDataTypeWithId[] = d.tsData.map((el, j) => ({
+          ...el,
+          id: `series_id_${j}`,
+          values: el.values.map((val, k) => ({
+            ...val,
+            addedByCO: val.addedByCO || false,
+            id: k,
+          })),
+        }));
+        setUpdatedData(tsData);
         setLoading(false);
       },
     );
   }, [countryCode]);
+
   useEffect(() => {
     const dataFilteredByGoal =
       selectedGoal === 'All Goals'
@@ -436,7 +444,7 @@ export function CountryHomePage() {
           )}
           <Modal
             className='undp-modal'
-            open={selectedSeries !== undefined}
+            open={selectedSeries !== undefined && !editMode}
             onCancel={() => {
               setSelectedSeries(undefined);
               setEditMode(false);
@@ -447,43 +455,39 @@ export function CountryHomePage() {
             }}
             width='80vw'
           >
-            {editMode ? (
-              <div>
-                {selectedSeries ? (
-                  <SeriesEditMode
-                    data={selectedSeries}
-                    setEditMode={setEditMode}
-                    updateData={updateData}
-                  />
-                ) : null}
+            <div>
+              {selectedSeries ? <SeriesInfoEl data={selectedSeries} /> : null}
+              <div className='flex-div'>
+                <button
+                  type='button'
+                  className='undp-button button-primary button-arrow'
+                  onClick={() => {
+                    setEditMode(true);
+                  }}
+                >
+                  Update Data
+                </button>
+                <button
+                  type='button'
+                  className='undp-button button-secondary button-arrow'
+                  onClick={() => {
+                    setSelectedSeries(undefined);
+                    setEditMode(false);
+                  }}
+                >
+                  Done
+                </button>
               </div>
-            ) : (
-              <>
-                {selectedSeries ? <SeriesInfoEl data={selectedSeries} /> : null}
-                <div className='flex-div'>
-                  <button
-                    type='button'
-                    className='undp-button button-primary button-arrow'
-                    onClick={() => {
-                      setEditMode(true);
-                    }}
-                  >
-                    Update Data & Methodology
-                  </button>
-                  <button
-                    type='button'
-                    className='undp-button button-secondary button-arrow'
-                    onClick={() => {
-                      setSelectedSeries(undefined);
-                      setEditMode(false);
-                    }}
-                  >
-                    Done
-                  </button>
-                </div>
-              </>
-            )}
+            </div>
           </Modal>
+          {editMode && selectedSeries ? (
+            <SeriesEditMode
+              data={selectedSeries}
+              indicatorList={indicatorList.filter(d => d !== 'All Indicators')}
+              setEditMode={setEditMode}
+              updateData={updateData}
+            />
+          ) : null}
           {addSeriesModalVisible ? (
             <AddSeries
               indicatorList={indicatorList.filter(d => d !== 'All Indicators')}

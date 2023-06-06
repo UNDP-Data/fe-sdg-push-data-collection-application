@@ -1,6 +1,7 @@
 import { Input, InputNumber, Modal, Radio, Select } from 'antd';
 import { useState } from 'react';
 import sortBy from 'lodash.sortby';
+import uniqBy from 'lodash.uniqby';
 import {
   FormDataType,
   MethodologyDataType,
@@ -23,7 +24,10 @@ export function AddSeries(props: Props) {
   const { indicatorList, setAddSeriesModalVisible, indexNo, updateData } =
     props;
   const [values, setValues] = useState<FormDataType[]>([]);
+  const [duplicateValue, setDuplicateValue] = useState(false);
   const [clicked, setClicked] = useState(false);
+  const [comment, setComment] = useState('');
+  const [sourceInfo, setSourceInfo] = useState('');
   const [seriesDescription, setSeriesDescription] = useState('');
   const [methodologyType, setMethodologyType] =
     useState<MethodologyTypeData>('Not Available');
@@ -34,14 +38,7 @@ export function AddSeries(props: Props) {
     string | undefined
   >(undefined);
   const [targetValue, setTargetValue] = useState<number | null>(null);
-  const methodologyOptions = [
-    'Not Available',
-    'Numerical',
-    'Binary',
-    'Likert',
-    'Halfing',
-    'Doubling',
-  ];
+  const methodologyOptions = ['Numerical', 'Binary', 'Likert', 'Not Available'];
 
   const updateObject = (
     id: number,
@@ -212,16 +209,63 @@ export function AddSeries(props: Props) {
           onClick={() => {
             const newValue: FormDataType = {
               id: values.length,
+              addedByCO: true,
             };
             setValues([...values, newValue]);
           }}
         >
           Add new value
         </button>
+        <div className='margin-top-05'>
+          <p className='label'>Add source for data added</p>
+          {clicked && sourceInfo === '' ? (
+            <Input
+              value={sourceInfo}
+              className='undp-input'
+              placeholder='add source for data here'
+              onChange={e => {
+                setSourceInfo(e.target.value || '');
+              }}
+              status='error'
+            />
+          ) : (
+            <Input
+              value={sourceInfo}
+              className='undp-input'
+              placeholder='add source for data here'
+              onChange={e => {
+                setSourceInfo(e.target.value || '');
+              }}
+            />
+          )}
+        </div>
+        <div className='margin-top-07 margin-bottom-07'>
+          <p className='label'>Add comments</p>
+          {clicked && comment === '' ? (
+            <Input.TextArea
+              value={comment}
+              className='undp-input'
+              placeholder='add comments here'
+              onChange={e => {
+                setComment(e.target.value || '');
+              }}
+              status='error'
+            />
+          ) : (
+            <Input.TextArea
+              value={comment}
+              className='undp-input'
+              placeholder='add comments here'
+              onChange={e => {
+                setComment(e.target.value || '');
+              }}
+            />
+          )}
+        </div>
       </div>
       <hr className='undp-style margin-bottom-07' />
       <h5 className='undp-typography margin-bottom-07'>Update Methodology</h5>
-      <p className='label'>Methodology Type</p>
+      <p className='label'>Type of Data</p>
       <Radio.Group
         className='undp-button-radio margin-bottom-07'
         onChange={d => {
@@ -230,9 +274,11 @@ export function AddSeries(props: Props) {
         value={methodologyType}
       >
         {methodologyOptions.map((d, i) => (
-          <Radio.Button className='undp-radio' key={i} value={d}>
-            {d}
-          </Radio.Button>
+          <Radio className='undp-radio' key={i} value={d}>
+            {d === 'Not Available'
+              ? 'Not Applicable (if methodology not available)'
+              : d}
+          </Radio>
         ))}
       </Radio.Group>
       {methodologyType === 'Likert' || methodologyType === 'Numerical' ? (
@@ -248,14 +294,8 @@ export function AddSeries(props: Props) {
             <Radio className='undp-radio' value='increase'>
               increase
             </Radio>
-            <Radio className='undp-radio' value='not decrease'>
-              not decrease
-            </Radio>
             <Radio className='undp-radio' value='decrease'>
               decrease
-            </Radio>
-            <Radio className='undp-radio' value='not increase'>
-              not increase
             </Radio>
           </Radio.Group>
         </>
@@ -303,7 +343,33 @@ export function AddSeries(props: Props) {
         className='undp-button button-secondary button-arrow'
         onClick={() => {
           setClicked(true);
-          if (selectedIndicator && seriesDescription) {
+          const filteredSortedValue = sortBy(
+            values
+              .filter(
+                d =>
+                  !CheckUndefinedOrNull(d.value) &&
+                  !CheckUndefinedOrNull(d.year),
+              )
+              .map(d => ({
+                value: d.value as number,
+                year: d.year as number,
+                label: d.label,
+                id: d.id,
+                addedByCO: d.addedByCO,
+              })),
+            'year',
+          );
+          if (
+            uniqBy(filteredSortedValue, 'year').length !==
+            filteredSortedValue.length
+          ) {
+            setDuplicateValue(true);
+          } else if (
+            selectedIndicator &&
+            seriesDescription &&
+            sourceInfo !== '' &&
+            comment !== ''
+          ) {
             if (methodologyType === 'Binary' || methodologyType === 'Likert') {
               if (!CheckUndefinedOrNull(targetValue)) {
                 const methodologyObj: MethodologyDataType | 'NA' =
@@ -337,6 +403,8 @@ export function AddSeries(props: Props) {
                         value: d.value as number,
                         year: d.year as number,
                         label: d.label,
+                        id: d.id,
+                        addedByCO: d.addedByCO,
                       })),
                     'year',
                   ),
@@ -377,6 +445,8 @@ export function AddSeries(props: Props) {
                       value: d.value as number,
                       year: d.year as number,
                       label: d.label,
+                      id: d.id,
+                      addedByCO: d.addedByCO,
                     })),
                   'year',
                 ),
@@ -390,6 +460,30 @@ export function AddSeries(props: Props) {
       >
         Save Data & Methodology
       </button>
+      {duplicateValue && clicked ? (
+        <p
+          className='undp-typography margin-top-05 italics margin-bottom-00'
+          style={{ color: 'var(--dark-red)' }}
+        >
+          Please remove the duplicate years
+        </p>
+      ) : null}
+      {sourceInfo === '' && clicked ? (
+        <p
+          className='undp-typography margin-top-05 italics margin-bottom-00'
+          style={{ color: 'var(--dark-red)' }}
+        >
+          Add source info
+        </p>
+      ) : null}
+      {comment === '' && clicked ? (
+        <p
+          className='undp-typography margin-top-05 italics margin-bottom-00'
+          style={{ color: 'var(--dark-red)' }}
+        >
+          Add comments
+        </p>
+      ) : null}
     </Modal>
   );
 }
