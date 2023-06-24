@@ -7,19 +7,18 @@ interface InterlinkagesDataType {
   Target?: string;
   'Target Text'?: string;
   Description?: string;
+  LinkageType: string[];
 }
 
 export function GenerateReport() {
   const [clicked, setClicked] = useState(false);
-  const [growthPathways, setGrowthPathway] = useState<undefined | string>(
-    undefined,
-  );
+  const [sdgMoment, setSDGMoment] = useState<undefined | string>(undefined);
   const [trends, setTrends] = useState<undefined | string>(undefined);
-  const [nationalPriorities, setNationalPriorities] = useState<
+  const [fiscal, setFiscal] = useState<undefined | string>(undefined);
+  const [sdgStimulus, setSDGStimulus] = useState<undefined | string>(undefined);
+  const [sdgStimulusBulletPoints, setSDGStimulusBulletPoints] = useState<
     undefined | string
   >(undefined);
-  const [futures, setFutures] = useState<undefined | string>(undefined);
-  const [fiscal, setFiscal] = useState<undefined | string>(undefined);
   const [interlinkages, setInterlinkages] = useState<InterlinkagesDataType[]>(
     [],
   );
@@ -29,10 +28,26 @@ export function GenerateReport() {
       targetList.push(target);
     });
   });
-
+  const linkageTypeOptions = [
+    {
+      option: 'Synergies',
+      value: 'synergies',
+    },
+    {
+      option: 'Trade-Offs',
+      value: 'tradeOffs',
+    },
+    {
+      option: 'Not Specified',
+      value: 'notSpecified',
+    },
+  ];
   return (
     <div>
-      <div className='max-width margin-top-13 margin-bottom-13'>
+      <div
+        className='max-width margin-top-13 margin-bottom-13'
+        style={{ padding: '0 var(--spacing-07)' }}
+      >
         <div
           className='flex-div flex-vert-align-center padding-top-09'
           style={{ justifyContent: 'space-between' }}
@@ -46,20 +61,20 @@ export function GenerateReport() {
             onClick={() => {
               setClicked(true);
               if (
-                growthPathways &&
-                trends &&
-                nationalPriorities &&
-                futures &&
+                sdgMoment &&
                 fiscal &&
-                interlinkages.filter(d => !d.Target || !d.Description)
-                  .length === 0
+                interlinkages.filter(
+                  d => !d.Target || !d.Description || d.LinkageType.length < 2,
+                ).length === 0 &&
+                sdgStimulus
               ) {
                 const dataFromUpdatedData = {
-                  'Growth Pathways': growthPathways,
+                  SDGMoment: sdgMoment,
                   Trends: trends,
                   Interlinkages: interlinkages,
-                  Futures: futures,
                   Fiscal: fiscal,
+                  SDGStimulus: sdgStimulus,
+                  SDGStimulusBulletPoints: sdgStimulusBulletPoints,
                 };
                 const dataString = JSON.stringify(dataFromUpdatedData);
                 const blob = new Blob([dataString], {
@@ -87,26 +102,26 @@ export function GenerateReport() {
                 width: '100%',
               }}
             >
-              <h5 className='undp-typography'>Growth pathways</h5>
-              {clicked && !growthPathways ? (
+              <h5 className='undp-typography'>SDG Moment</h5>
+              {clicked && !sdgMoment ? (
                 <Input.TextArea
                   className='undp-input'
-                  placeholder='Enter text for growth pathways'
+                  placeholder='Enter text for SDGMoment'
                   style={{ height: 120 }}
-                  value={growthPathways}
+                  value={sdgMoment}
                   onChange={e => {
-                    setGrowthPathway(e.target.value);
+                    setSDGMoment(e.target.value);
                   }}
                   status='error'
                 />
               ) : (
                 <Input.TextArea
                   className='undp-input'
-                  placeholder='Enter text for growth pathways'
+                  placeholder='Enter text for SDGMoment'
                   style={{ height: 120 }}
-                  value={growthPathways}
+                  value={sdgMoment}
                   onChange={e => {
-                    setGrowthPathway(e.target.value);
+                    setSDGMoment(e.target.value);
                   }}
                 />
               )}
@@ -117,59 +132,16 @@ export function GenerateReport() {
                 width: '100%',
               }}
             >
-              <h5 className='undp-typography'>Trends</h5>
-              {clicked && !trends ? (
-                <Input.TextArea
-                  className='undp-input'
-                  placeholder='Enter text for Trends'
-                  style={{ height: 120 }}
-                  value={trends}
-                  onChange={e => {
-                    setTrends(e.target.value);
-                  }}
-                  status='error'
-                />
-              ) : (
-                <Input.TextArea
-                  className='undp-input'
-                  placeholder='Enter text for Trends'
-                  style={{ height: 120 }}
-                  value={trends}
-                  onChange={e => {
-                    setTrends(e.target.value);
-                  }}
-                />
-              )}
-            </div>
-            <div
-              className='margin-bottom-07'
-              style={{
-                width: '100%',
-              }}
-            >
-              <h5 className='undp-typography'>National Priorities</h5>
-              {clicked && !nationalPriorities ? (
-                <Input.TextArea
-                  className='undp-input'
-                  placeholder='Enter text for National Priorities'
-                  style={{ height: 120 }}
-                  value={nationalPriorities}
-                  onChange={e => {
-                    setNationalPriorities(e.target.value);
-                  }}
-                  status='error'
-                />
-              ) : (
-                <Input.TextArea
-                  className='undp-input'
-                  placeholder='Enter text for National Priorities'
-                  style={{ height: 120 }}
-                  value={nationalPriorities}
-                  onChange={e => {
-                    setNationalPriorities(e.target.value);
-                  }}
-                />
-              )}
+              <h5 className='undp-typography'>Trends (not required)</h5>
+              <Input.TextArea
+                className='undp-input'
+                placeholder='Enter text for Trends'
+                style={{ height: 120 }}
+                value={trends}
+                onChange={e => {
+                  setTrends(e.target.value);
+                }}
+              />
             </div>
             <div
               className='margin-bottom-07'
@@ -200,6 +172,7 @@ export function GenerateReport() {
                                 'Target Text': targetList.filter(
                                   t => t.Target === e,
                                 )[0]['Target Description'],
+                                LinkageType: obj.LinkageType,
                               };
                             }
                             return obj;
@@ -222,6 +195,7 @@ export function GenerateReport() {
                       <Select
                         className='undp-select'
                         defaultValue='Select a target'
+                        showSearch
                         value={
                           d.Target
                             ? `Target ${d.Target}: ${d['Target Text']}`
@@ -236,6 +210,7 @@ export function GenerateReport() {
                                 'Target Text': targetList.filter(
                                   t => t.Target === e,
                                 )[0]['Target Description'],
+                                LinkageType: obj.LinkageType,
                               };
                             }
                             return obj;
@@ -255,7 +230,7 @@ export function GenerateReport() {
                       </Select>
                     )}
                   </div>
-                  <div>
+                  <div className='margin-bottom-05'>
                     <p className='undp-typography label'>
                       Interlinkage description
                     </p>
@@ -272,6 +247,7 @@ export function GenerateReport() {
                                 Target: obj.Target,
                                 Description: e.target.value,
                                 'Target text': obj['Target Text'],
+                                LinkageType: obj.LinkageType,
                               };
                             }
                             return obj;
@@ -301,6 +277,76 @@ export function GenerateReport() {
                       />
                     )}
                   </div>
+                  <div>
+                    <p className='undp-typography label'>
+                      Interlinkage Type (please select 2 in the order you would
+                      like to see in the report)
+                    </p>
+                    {clicked && d.LinkageType.length < 2 ? (
+                      <Select
+                        className='undp-select'
+                        mode='multiple'
+                        placeholder='Enter text for selected interlinkage'
+                        value={d.LinkageType}
+                        onChange={e => {
+                          const updatedArray = interlinkages.map((obj, k) => {
+                            if (k === i) {
+                              return {
+                                Target: obj.Target,
+                                Description: obj.Description,
+                                'Target text': obj['Target Text'],
+                                LinkageType: e,
+                              };
+                            }
+                            return obj;
+                          });
+                          setInterlinkages(updatedArray);
+                        }}
+                        status='error'
+                      >
+                        {linkageTypeOptions.map((el, j) => (
+                          <Select.Option
+                            className='undp-select-option'
+                            value={el.value}
+                            key={j}
+                          >
+                            {el.option}
+                          </Select.Option>
+                        ))}
+                      </Select>
+                    ) : (
+                      <Select
+                        className='undp-select'
+                        mode='multiple'
+                        placeholder='Enter text for selected interlinkage'
+                        value={d.LinkageType}
+                        onChange={e => {
+                          const updatedArray = interlinkages.map((obj, k) => {
+                            if (k === i) {
+                              return {
+                                Target: obj.Target,
+                                Description: obj.Description,
+                                'Target text': obj['Target Text'],
+                                LinkageType: e,
+                              };
+                            }
+                            return obj;
+                          });
+                          setInterlinkages(updatedArray);
+                        }}
+                      >
+                        {linkageTypeOptions.map((el, j) => (
+                          <Select.Option
+                            className='undp-select-option'
+                            value={el.value}
+                            key={j}
+                          >
+                            {el.option}
+                          </Select.Option>
+                        ))}
+                      </Select>
+                    )}
+                  </div>
                   <button
                     type='button'
                     className='undp-button button-tertiary'
@@ -323,6 +369,7 @@ export function GenerateReport() {
                       Target: undefined,
                       'Target Text': undefined,
                       Description: undefined,
+                      LinkageType: ['synergies', 'tradeOffs'],
                     };
                     setInterlinkages([...interlinkages, newValue]);
                   }}
@@ -330,36 +377,6 @@ export function GenerateReport() {
                   Add new interlinkage
                 </button>
               </div>
-            </div>
-            <div
-              className='margin-bottom-07'
-              style={{
-                width: '100%',
-              }}
-            >
-              <h5 className='undp-typography'>Futures</h5>
-              {clicked && !futures ? (
-                <Input.TextArea
-                  className='undp-input'
-                  placeholder='Enter text for Futures'
-                  style={{ height: 120 }}
-                  value={futures}
-                  onChange={e => {
-                    setFutures(e.target.value);
-                  }}
-                  status='error'
-                />
-              ) : (
-                <Input.TextArea
-                  className='undp-input'
-                  placeholder='Enter text for Futures'
-                  style={{ height: 120 }}
-                  value={futures}
-                  onChange={e => {
-                    setFutures(e.target.value);
-                  }}
-                />
-              )}
             </div>
             <div
               className='margin-bottom-07'
@@ -391,6 +408,55 @@ export function GenerateReport() {
                 />
               )}
             </div>
+            <div
+              className='margin-bottom-05'
+              style={{
+                width: '100%',
+              }}
+            >
+              <h5 className='undp-typography'>SDG Stimulus</h5>
+              {clicked && !sdgStimulus ? (
+                <Input.TextArea
+                  className='undp-input'
+                  placeholder='Enter text for SDG Stimulus'
+                  style={{ height: 120 }}
+                  value={sdgStimulus}
+                  onChange={e => {
+                    setSDGStimulus(e.target.value);
+                  }}
+                  status='error'
+                />
+              ) : (
+                <Input.TextArea
+                  className='undp-input'
+                  placeholder='Enter text for SDG Stimulus'
+                  style={{ height: 120 }}
+                  value={sdgStimulus}
+                  onChange={e => {
+                    setSDGStimulus(e.target.value);
+                  }}
+                />
+              )}
+            </div>
+            <div
+              className='margin-bottom-07'
+              style={{
+                width: '100%',
+              }}
+            >
+              <h5 className='undp-typography'>
+                Bullet Points for SDG Stimulus (not required)
+              </h5>
+              <Input.TextArea
+                className='undp-input'
+                placeholder='Enter text for SDG Stimulus'
+                style={{ height: 120 }}
+                value={sdgStimulusBulletPoints}
+                onChange={e => {
+                  setSDGStimulusBulletPoints(e.target.value);
+                }}
+              />
+            </div>
           </div>
         </div>
         <button
@@ -399,20 +465,21 @@ export function GenerateReport() {
           onClick={() => {
             setClicked(true);
             if (
-              growthPathways &&
-              trends &&
-              nationalPriorities &&
-              futures &&
+              sdgMoment &&
               fiscal &&
-              interlinkages.filter(d => !d.Target || !d.Description).length ===
-                0
+              sdgMoment &&
+              sdgStimulus &&
+              interlinkages.filter(
+                d => !d.Target || !d.Description || d.LinkageType.length < 2,
+              ).length === 0
             ) {
               const dataFromUpdatedData = {
-                'Growth Pathways': growthPathways,
+                SDGMoment: sdgMoment,
                 Trends: trends,
                 Interlinkages: interlinkages,
-                Futures: futures,
                 Fiscal: fiscal,
+                SDGStimulus: sdgStimulus,
+                SDGStimulusBulletPoints: sdgStimulusBulletPoints,
               };
               const dataString = JSON.stringify(dataFromUpdatedData);
               const blob = new Blob([dataString], {
