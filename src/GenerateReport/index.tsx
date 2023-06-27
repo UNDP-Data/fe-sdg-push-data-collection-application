@@ -13,10 +13,16 @@ interface InterlinkagesDataType {
 export function GenerateReport() {
   const [clicked, setClicked] = useState(false);
   const [sdgMoment, setSDGMoment] = useState<undefined | string>(undefined);
+  const [SDGMomentSubtext, setSDGMomentSubtext] = useState<undefined | string>(
+    undefined,
+  );
   const [trends, setTrends] = useState<undefined | string>(undefined);
   const [fiscal, setFiscal] = useState<undefined | string>(undefined);
   const [sdgStimulus, setSDGStimulus] = useState<undefined | string>(undefined);
   const [sdgStimulusBulletPoints, setSDGStimulusBulletPoints] = useState<
+    undefined | string
+  >(undefined);
+  const [interlinkagesBulletPoint, setInterlinkagesBulletPoint] = useState<
     undefined | string
   >(undefined);
   const [interlinkages, setInterlinkages] = useState<InterlinkagesDataType[]>(
@@ -132,6 +138,25 @@ export function GenerateReport() {
                 width: '100%',
               }}
             >
+              <h5 className='undp-typography'>
+                SDG Moment Footnote (not required)
+              </h5>
+              <Input.TextArea
+                className='undp-input'
+                placeholder='Enter footnote for SDG Moment'
+                style={{ height: 120 }}
+                value={SDGMomentSubtext}
+                onChange={e => {
+                  setSDGMomentSubtext(e.target.value);
+                }}
+              />
+            </div>
+            <div
+              className='margin-bottom-07'
+              style={{
+                width: '100%',
+              }}
+            >
               <h5 className='undp-typography'>Trends (not required)</h5>
               <Input.TextArea
                 className='undp-input'
@@ -142,6 +167,36 @@ export function GenerateReport() {
                   setTrends(e.target.value);
                 }}
               />
+            </div>
+            <div
+              className='margin-bottom-07'
+              style={{
+                width: '100%',
+              }}
+            >
+              <h5 className='undp-typography'>Interlinkages bullet points</h5>
+              {clicked && !interlinkagesBulletPoint ? (
+                <Input.TextArea
+                  className='undp-input'
+                  placeholder='Enter text for SDGMoment'
+                  style={{ height: 120 }}
+                  value={interlinkagesBulletPoint}
+                  onChange={e => {
+                    setInterlinkagesBulletPoint(e.target.value);
+                  }}
+                  status='error'
+                />
+              ) : (
+                <Input.TextArea
+                  className='undp-input'
+                  placeholder='Enter text for SDGMoment'
+                  style={{ height: 120 }}
+                  value={interlinkagesBulletPoint}
+                  onChange={e => {
+                    setInterlinkagesBulletPoint(e.target.value);
+                  }}
+                />
+              )}
             </div>
             <div
               className='margin-bottom-07'
@@ -475,8 +530,10 @@ export function GenerateReport() {
             ) {
               const dataFromUpdatedData = {
                 SDGMoment: sdgMoment,
+                SDGMomentSubtext,
                 Trends: trends,
                 Interlinkages: interlinkages,
+                InterlinkageBulletPoints: interlinkagesBulletPoint,
                 Fiscal: fiscal,
                 SDGStimulus: sdgStimulus,
                 SDGStimulusBulletPoints: sdgStimulusBulletPoints,
