@@ -76,8 +76,10 @@ export function GenerateReport() {
               ) {
                 const dataFromUpdatedData = {
                   SDGMoment: sdgMoment,
+                  SDGMomentSubtext,
                   Trends: trends,
                   Interlinkages: interlinkages,
+                  InterlinkageBulletPoints: interlinkagesBulletPoint,
                   Fiscal: fiscal,
                   SDGStimulus: sdgStimulus,
                   SDGStimulusBulletPoints: sdgStimulusBulletPoints,
