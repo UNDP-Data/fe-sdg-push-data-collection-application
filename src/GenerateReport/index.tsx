@@ -12,7 +12,15 @@ interface InterlinkagesDataType {
 
 export function GenerateReport() {
   const [clicked, setClicked] = useState(false);
-  const [sdgMoment, setSDGMoment] = useState<undefined | string>(undefined);
+  const [SDGMomentGDP, setSDGMomentGDP] = useState<undefined | string>(
+    undefined,
+  );
+  const [SDGMomentConclusion, setSDGMomentConclusion] = useState<
+    undefined | string
+  >(undefined);
+  const [SDGMomentPeoplePlanet, setSDGMomentPeoplePlanet] = useState<
+    undefined | string
+  >(undefined);
   const [SDGMomentSubtext, setSDGMomentSubtext] = useState<undefined | string>(
     undefined,
   );
@@ -67,7 +75,9 @@ export function GenerateReport() {
             onClick={() => {
               setClicked(true);
               if (
-                sdgMoment &&
+                SDGMomentGDP &&
+                SDGMomentPeoplePlanet &&
+                SDGMomentConclusion &&
                 fiscal &&
                 interlinkages.filter(
                   d => !d.Target || !d.Description || d.LinkageType.length < 2,
@@ -75,8 +85,10 @@ export function GenerateReport() {
                 sdgStimulus
               ) {
                 const dataFromUpdatedData = {
-                  SDGMoment: sdgMoment,
+                  SDGMomentGDP,
                   SDGMomentSubtext,
+                  SDGMomentPeoplePlanet,
+                  SDGMomentConclusion,
                   Trends: trends,
                   Interlinkages: interlinkages,
                   InterlinkageBulletPoints: interlinkagesBulletPoint,
@@ -110,26 +122,86 @@ export function GenerateReport() {
                 width: '100%',
               }}
             >
-              <h5 className='undp-typography'>SDG Moment</h5>
-              {clicked && !sdgMoment ? (
+              <h5 className='undp-typography'>SDG Moment GDP</h5>
+              {clicked && !SDGMomentGDP ? (
                 <Input.TextArea
                   className='undp-input'
-                  placeholder='Enter text for SDGMoment'
+                  placeholder='Enter text for SDG Moment GDP'
                   style={{ height: 120 }}
-                  value={sdgMoment}
+                  value={SDGMomentGDP}
                   onChange={e => {
-                    setSDGMoment(e.target.value);
+                    setSDGMomentGDP(e.target.value);
                   }}
                   status='error'
                 />
               ) : (
                 <Input.TextArea
                   className='undp-input'
-                  placeholder='Enter text for SDGMoment'
+                  placeholder='Enter text for SDG Moment GDP'
                   style={{ height: 120 }}
-                  value={sdgMoment}
+                  value={SDGMomentGDP}
                   onChange={e => {
-                    setSDGMoment(e.target.value);
+                    setSDGMomentGDP(e.target.value);
+                  }}
+                />
+              )}
+            </div>
+            <div
+              className='margin-bottom-07'
+              style={{
+                width: '100%',
+              }}
+            >
+              <h5 className='undp-typography'>SDG Moment People and Planet</h5>
+              {clicked && !SDGMomentPeoplePlanet ? (
+                <Input.TextArea
+                  className='undp-input'
+                  placeholder='Enter text for SDG Moment People and Planet'
+                  style={{ height: 120 }}
+                  value={SDGMomentPeoplePlanet}
+                  onChange={e => {
+                    setSDGMomentPeoplePlanet(e.target.value);
+                  }}
+                  status='error'
+                />
+              ) : (
+                <Input.TextArea
+                  className='undp-input'
+                  placeholder='Enter text for SDG Moment People and Planet'
+                  style={{ height: 120 }}
+                  value={SDGMomentPeoplePlanet}
+                  onChange={e => {
+                    setSDGMomentPeoplePlanet(e.target.value);
+                  }}
+                />
+              )}
+            </div>
+            <div
+              className='margin-bottom-07'
+              style={{
+                width: '100%',
+              }}
+            >
+              <h5 className='undp-typography'>SDG Moment Conclusion</h5>
+              {clicked && !SDGMomentConclusion ? (
+                <Input.TextArea
+                  className='undp-input'
+                  placeholder='Enter text for SDG Moment Conclusion'
+                  style={{ height: 120 }}
+                  value={SDGMomentConclusion}
+                  onChange={e => {
+                    setSDGMomentConclusion(e.target.value);
+                  }}
+                  status='error'
+                />
+              ) : (
+                <Input.TextArea
+                  className='undp-input'
+                  placeholder='Enter text for SDG Moment Conclusion'
+                  style={{ height: 120 }}
+                  value={SDGMomentConclusion}
+                  onChange={e => {
+                    setSDGMomentConclusion(e.target.value);
                   }}
                 />
               )}
@@ -522,16 +594,19 @@ export function GenerateReport() {
           onClick={() => {
             setClicked(true);
             if (
-              sdgMoment &&
+              SDGMomentGDP &&
+              SDGMomentPeoplePlanet &&
+              SDGMomentConclusion &&
               fiscal &&
-              sdgMoment &&
               sdgStimulus &&
               interlinkages.filter(
                 d => !d.Target || !d.Description || d.LinkageType.length < 2,
               ).length === 0
             ) {
               const dataFromUpdatedData = {
-                SDGMoment: sdgMoment,
+                SDGMomentGDP,
+                SDGMomentPeoplePlanet,
+                SDGMomentConclusion,
                 SDGMomentSubtext,
                 Trends: trends,
                 Interlinkages: interlinkages,
