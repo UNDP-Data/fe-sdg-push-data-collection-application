@@ -409,6 +409,9 @@ export function AddSeries(props: Props) {
                     'year',
                   ),
                   methodology: methodologyObj,
+                  'Custodian_Agency(ies)': 'Country Office',
+                  'Partner_Agency(ies)': '',
+                  Tier_Classification: '',
                 };
                 updateData(updatedData);
                 setAddSeriesModalVisible(false);
@@ -434,6 +437,9 @@ export function AddSeries(props: Props) {
                   selectedIndicator.replaceAll('Indicator ', '').split('.')[1]
                 }`,
                 indicator: selectedIndicator.replaceAll('Indicator ', ''),
+                'Custodian_Agency(ies)': 'Country Office',
+                'Partner_Agency(ies)': '',
+                Tier_Classification: '',
                 values: sortBy(
                   values
                     .filter(

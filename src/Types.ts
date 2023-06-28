@@ -92,6 +92,9 @@ export interface TimeSeriesDataTypeWOValue {
     | 'Insufficient Data'
     | 'No Data After 2015'
     | 'Deterioration';
+  'Custodian_Agency(ies)': string;
+  'Partner_Agency(ies)': string;
+  Tier_Classification: string;
 }
 
 export interface TimeSeriesDataType extends TimeSeriesDataTypeWOValue {

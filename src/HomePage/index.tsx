@@ -1,4 +1,4 @@
-import { Input, Select, Modal, Pagination } from 'antd';
+import { Input, Select, Modal, Pagination, notification } from 'antd';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { json } from 'd3-request';
@@ -15,6 +15,13 @@ import { AddSeries } from './AddSeries';
 
 export function CountryHomePage() {
   const countryCode = useParams().country;
+  const [api, contextHolder] = notification.useNotification();
+  const openNotification = (name: string) => {
+    api.info({
+      message: `${name} file uploaded successfully`,
+      placement: 'top',
+    });
+  };
   const [selectedIndicator, setSelectedIndicator] =
     useState<string>('All Indicators');
   const [selectedGoal, setSelectedGoal] = useState<string>('All Goals');
@@ -165,8 +172,8 @@ export function CountryHomePage() {
       reader.onload = event => {
         const fileContent = event.target?.result as string;
         const jsonData = JSON.parse(fileContent);
-        // Use the jsonData as needed
         setUpdatedData(jsonData);
+        openNotification(selectedFile.name);
       };
       reader.readAsText(selectedFile);
     }
@@ -174,6 +181,7 @@ export function CountryHomePage() {
 
   return (
     <div>
+      {contextHolder}
       {loading ? (
         <div
           style={{
