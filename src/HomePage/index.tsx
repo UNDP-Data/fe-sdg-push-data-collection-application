@@ -172,7 +172,12 @@ export function CountryHomePage() {
       reader.onload = event => {
         const fileContent = event.target?.result as string;
         const jsonData = JSON.parse(fileContent);
-        setUpdatedData(jsonData);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const finalData = jsonData.map((d: any, j: number) => ({
+          ...d,
+          id: `series_id_${j}`,
+        }));
+        setUpdatedData(finalData);
         openNotification(selectedFile.name);
       };
       reader.readAsText(selectedFile);
