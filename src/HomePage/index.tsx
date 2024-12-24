@@ -63,7 +63,7 @@ export function CountryHomePage() {
     setError(undefined);
     setUpdatedData([]);
     json(
-      `https://raw.githubusercontent.com/UNDP-Data/SDG-Accelerator/production/public/data/CountryData/${countryCode}.json`,
+      `https://raw.githubusercontent.com/UNDP-Data/SDG-Accelerator-Data-Repo/refs/heads/main/CountryData/${countryCode}.json`,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (err: any, d: CountryDataType) => {
         if (err) {
